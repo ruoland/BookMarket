@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Welcome to Book Market</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+</head>
+<body>
+<!-- Navigation -->
+<nav class="navbar navbar-expand navbar-dark bg-dark">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" th:href="@{/home}">Book Market</a>
+        </div>
+        <div>
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item"><a class="nav-link" th:href="@{/home}">Home</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/books}">Books</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/books/add}">Add Book</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/cart/}">Cart</a></li>
+
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <form th:action="@{/logout}" method="POST">
+                        <input type="submit" class="btn btn-sm btn-success" value="Logout" />
+                    </form>
+                </li>
+
+                <li class="nav-item" sec:authorize="!isAuthenticated()">
+                    <a th:href="@{/login}">Login</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Jumbotron -->
+<div class="jumbotron" align="center">
+    <div class="container">
+        <h1 class="display-3">Welcome to Book Market</h1>
+        <p>최고의 책을 찾아보세요!</p>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h3 th:text="${strapline}">Welcome message goes here.</h3>
+            <!-- Add more content here as needed -->
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="container">
+    <hr>
+    <p>&copy; Book Market 2025</p>
+</footer>
+</body>
+</html>
