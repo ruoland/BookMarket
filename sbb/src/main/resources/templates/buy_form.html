@@ -2,10 +2,10 @@
 <div layout:fragment="content" class="container my-3">
 	<div class="my-3 border-bottom">
 		<div>
-			<h4>회원가입</h4>
+			<h4>책 구매하기</h4>
 		</div>
 	</div>
-	<form th:action="@{/user/signup}" th:object="${userRegistryForm}" method="post">
+	<form th:action="@{/book/buy}" th:object="${userRegistryForm}" method="post">
 		<div th:replace="~{form_errors :: formErrorsFragment}"></div>
 		<div class="mb-3">
 			<label for="userId" class="form-label">사용자ID</label>

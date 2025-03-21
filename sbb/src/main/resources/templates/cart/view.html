@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>장바구니</title>
+</head>
+<body>
+<h1>장바구니</h1>
+<div th:if="${cart == null || cart.books.isEmpty()}">
+    <p>장바구니가 비어 있습니다.</p>
+</div>
+<div th:if="${cart != null and !cart.books.isEmpty()}">
+    <table>
+        <thead>
+        <tr>
+            <th>도서 ID</th>
+            <th>수량</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="cartItem : ${cart.books}">
+            <td th:text="${cartItem.bookId}"></td>
+            <td th:text="${cartItem.amount}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<a th:href="@{/books}">계속 쇼핑하기</a>
+</body>
+</html>

@@ -1,49 +1,70 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
+
+<html layout:decorate="~{layout}"
+      xmlns:th="http://www.thymeleaf.org" th:inline="javascript"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
   <meta charset="UTF-8">
-  <link rel="stylesheet" th:href="@{/resources/css/bootstrap.min.css}">
-  <script th:src="@{/resources/js/controllers.js}"></script>
+  <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+  <script th:src="@{/js/controllers.js}"></script>
   <title>도서 상세 정보</title>
+  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
 </head>
 <body>
-<div class="container">
-  <div class="row">
-    <div class="col-md-4">
-      <th:block th:if="${book.fileName != null}">
-        <img th:src="@{/images/${book.fileName}}" style="width: 100%" alt="Book Image"/>
+<th:block layout:fragment="content">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4">
+        <div th:if="${book.fileName != null and !book.fileName.isEmpty()}">
+          <img th:src="@{'/upload/' + ${book.fileName}}" style="width: 60%" alt="Book Image"/>
+        </div>
+        <div th:unless="${book.fileName != null and !book.fileName.isEmpty()}">
+          <img th:src="@{'/images/no-image.png'}" style="width: 60%" alt="No Image Available"/>
+        </div>
+      </div>
+      <div class="col-md-8">
 
-      </th:block>
-      <th:block th:if="${book.fileName == null}">
-        <img th:src="@{/images/${book.fileName}}" style="width: 100%" alt="No Image"/>
+        <h3 th:text="${book.name}"></h3>
+        <p th:text="${book.description}"></p>
+        <br>
+        <p><b>도서코드 : </b><span class="badge badge-info" th:text="${book.bookId}"></span></p>
+        <p><b>저자</b> : <span th:text="${book.author}"></span></p>
+        <p><b>출판사</b> : <span th:text="${book.publisher}"></span></p>
+        <p><b>출판일</b> : <span th:text="${book.releaseDate}"></span></p>
+        <p><b>분류</b> : <span th:text="${book.category}"></span></p>
+        <p><b>재고수</b> : <span th:text="${book.unitsInStock}"></span></p>
+        <h4 th:text="${#numbers.formatInteger(book.unitPrice, 0, 'COMMA') + '원'}"></h4>
+        <br>
+        <form th:action="@{/user/cart/add/{bookId}(bookId=${book.bookId})}" method="post">
+          <button type="submit" class="btn btn-primary">도서주문 &raquo;</button>
+        </form>
 
-      </th:block>
-    </div>
-    <div class="col-md-8">
-      <h3 th:text="${book.name}"></h3>
-      <p th:text="${book.description}"></p>
-      <br>
-      <p><b>도서코드 : </b><span class="badge badge-info" th:text="${book.bookId}"></span></p>
-      <p><b>저자</b> : <span th:text="${book.author}"></span></p>
-      <p><b>출판사</b> : <span th:text="${book.publisher}"></span></p>
-      <p><b>출판일</b> : <span th:text="${book.releaseDate}"></span></p>
-      <p><b>분류</b> : <span th:text="${book.category}"></span></p>
-      <p><b>재고수</b> : <span th:text="${book.unitsInStock}"></span></p>
-      <h4 th:text="${#numbers.formatInteger(book.unitPrice, 0, 'COMMA') + '원'}"></h4>
-      <br>
-      <form th:action="@{/cart/add/{bookId}(bookId=${book.bookId})}" method="post">
-        <button type="submit" class="btn btn-primary">도서주문 &raquo;</button>
-        <a th:href="@{/cart}" class="btn btn-warning">장바구니 &raquo;</a>
+        <a th:href="@{/user/cart/view}" class="btn btn-warning">장바구니 &raquo;</a>
         <a th:href="@{/books}" class="btn btn-secondary">도서 목록 &raquo;</a>
+        <a th:href="@{/books/edit?bookId={bookId}(bookId=${book.bookId})}"
+           th:if="${user != null && (book.author == #authentication.name || user.role.value == 'ROLE_ADMIN')}"
+           class="btn btn-primary">도서 수정 &raquo;</a>
+        <script th:inline="javascript">
+          var bookId = /*[[${book.bookId}]]*/ 'defaultBookId';
+        </script>
 
-        <th:block sec:authorize="isAuthenticated()">
-          <a th:href="@{/books/update(id=${book.bookId})}" class="btn btn-success">수정 &raquo;</a>
-          <a href="#" th:onclick="'javascript:deleteConfirm(\'' + ${book.bookId} + '\');'" class="btn btn-danger">삭제 &raquo;</a>
-        </th:block>
-      </form>
+        <button
+                th:if="${user != null && (book.author == #authentication.name || user.role.value == 'ROLE_ADMIN')}"
+                class="btn btn-danger" onclick="deleteConfirm(bookId)">도서 삭제 &raquo;</button>
+
+      </div>
     </div>
   </div>
-</div>
+</th:block>
+<script th:inline="javascript">
+  /*[[${errorMessage}]]*/ {
+      alert(/*[(${errorMessage})]*/);
+  }
+  /*[[${successMessage}]]*/ {
+      alert(/*[(${successMessage})]*/);
+  }
+</script>
 </body>
 </html>
