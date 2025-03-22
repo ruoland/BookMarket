@@ -32,13 +32,5 @@ public class SbbUser {
     private Cart cart;
 
     private UserRole role;
-    // 편의 메서드 추가
-    public void setCart(Cart cart) {
-        this.cart = cart;
-        cart.setSbbUser(this);
-    }
 
-    public UserRole getRole() {
-        return role;
-    }
 }

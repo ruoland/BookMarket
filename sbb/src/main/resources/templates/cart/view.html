@@ -1,30 +1,59 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html layout:decorate="~{layout}" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
     <title>장바구니</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
-<h1>장바구니</h1>
-<div th:if="${cart == null || cart.books.isEmpty()}">
-    <p>장바구니가 비어 있습니다.</p>
-</div>
-<div th:if="${cart != null and !cart.books.isEmpty()}">
-    <table>
-        <thead>
-        <tr>
-            <th>도서 ID</th>
-            <th>수량</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="cartItem : ${cart.books}">
-            <td th:text="${cartItem.bookId}"></td>
-            <td th:text="${cartItem.amount}"></td>
-        </tr>
-        </tbody>
-    </table>
-</div>
-<a th:href="@{/books}">계속 쇼핑하기</a>
+<th:block layout:fragment="content">
+    <div class="container my-5">
+        <h1 class="mb-4">장바구니</h1>
+
+        <div th:if="${cart == null || cart.books.isEmpty()}" class="alert alert-info">
+            장바구니가 비어 있습니다.
+        </div>
+
+        <div th:if="${cart != null and !cart.books.isEmpty()}">
+            <table class="table table-striped table-bordered">
+                <thead>
+                <tr>
+                    <th>도서 ID</th>
+                    <th>제목</th>
+                    <th>저자</th>
+                    <th>수량</th>
+                    <th>가격</th>
+                    <th>삭제</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="cartItem : ${cart.books}">
+                    <td th:text="${cartItem.book.bookId}"></td>
+                    <td th:text="${cartItem.book.name}"></td>
+                    <td th:text="${cartItem.book.author}"></td>
+                    <td th:text="${cartItem.amount}"></td>
+                    <td th:text="${#numbers.formatCurrency(totalPrice)}"></td>
+                    <td>
+                        <form th:action="@{/cart/remove}" method="post">
+                            <input type="hidden" name="bookId" th:value="${cartItem.book.bookId}" />
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                <i class="fas fa-trash-alt"></i> 삭제
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="d-flex justify-content-end">
+                <h4>총 가격: <span th:text="${#numbers.formatCurrency(totalPrice)}"></span></h4>
+            </div>
+        </div>
+
+        <a th:href="@{/books}" class="btn btn-primary">계속 쇼핑하기</a>
+        <a th:href="@{/buy}" class="btn btn-success">구매하기</a>
+
+    </div>
+</th:block>
 </body>
 </html>

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class CartService {
 
-    private final CartRepository repository;
+    private final CartRepository cartRepository;
     private final UserRepository userRepository;
 
     public Cart getCart(String username) {
@@ -19,12 +19,22 @@ public class CartService {
                 .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다: " + username));
 
         // 카트 조회 또는 생성
-        return repository.findBySbbUser(user)
+        return cartRepository.findBySbbUser(user)
                 .orElseGet(() -> {
                     Cart newCart = new Cart();
                     newCart.setSbbUser(user);
-                    return repository.save(newCart);
+                    return cartRepository.save(newCart);
                 });
     }
 
+
+    public int totalAmount(String username){
+        Cart cart = cartRepository.findBySbbUser_UserId(username).orElseThrow(() -> new UserNotFoundException(("사용자를 찾을 수 없었습니다:"+username)));
+        return cart.getBooks().stream().mapToInt(CartItem::getAmount).sum();
+    }
+
+    public int totalPrice(String username){
+        Cart cart = cartRepository.findBySbbUser_UserId(username).orElseThrow(() -> new UserNotFoundException(("사용자를 찾을 수 없었습니다:"+username)));
+        return cart.getBooks().stream().mapToInt(item -> item.getAmount() * item.getBook().getUnitPrice()).sum();
+    }
 }

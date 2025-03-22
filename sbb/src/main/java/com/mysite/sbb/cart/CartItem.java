@@ -10,7 +10,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@RequiredArgsConstructor
+@NoArgsConstructor
 public class CartItem {
 
     @Id
@@ -25,8 +25,12 @@ public class CartItem {
     @JoinColumn(name = "cart_id")
     private Cart cart;
 
-    private String bookId;
+    @ManyToOne
+    @JoinColumn(name = "book_id")
+    private Book book;
 
     private int amount;
+
+
 
 }

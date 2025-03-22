@@ -1,7 +1,6 @@
 package com.mysite.sbb.user;
 
 import com.mysite.sbb.DataNotFoundException;
-import com.mysite.sbb.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.Authentication;
@@ -49,10 +48,6 @@ public class UserService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
-    }
-
-    public boolean canUserAccess(String user, String author) {
-        return  isCurrentUserAdmin() || user.equals(author);
     }
 
     public boolean canCurrentUserAccess(String author){

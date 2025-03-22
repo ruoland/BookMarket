@@ -38,6 +38,26 @@ public class BookController {
     @Autowired
     UserService userService;
 
+    //책 추가 폼
+    @GetMapping("/add")
+    public String addBookForm(Model model, @RequestParam(value = "language", required = false) String language) {
+        if(language != null){
+            LocaleContextHolder.setLocale(new Locale(language));
+        }
+        model.addAttribute("NewBook", new Book());
+        return "addBook";
+    }
+
+    @PostMapping("/add")
+    public String submitAddNewBook(@Valid @ModelAttribute("NewBook") Book book, BindingResult result) {
+        if(result.hasErrors()) {
+            return "addBook";
+        }
+        bookService.downloadImage(book);
+        bookService.setNewBook(book);
+        return "redirect:/books";
+    }
+
     @PostMapping("/remove")
     public String removeBook(RedirectAttributes model, @RequestParam("bookId") String bookId, Principal principal) {
         Book book = bookService.getBookById(bookId);
@@ -74,25 +94,6 @@ public class BookController {
         }
         bookService.downloadImage(book);
         bookService.setUpdateBook(book);
-        return "redirect:/books";
-    }
-    //책 추가 폼
-    @GetMapping("/add")
-    public String addBookForm(Model model, @RequestParam(value = "language", required = false) String language) {
-        if(language != null){
-            LocaleContextHolder.setLocale(new Locale(language));
-        }
-        model.addAttribute("NewBook", new Book());
-        return "addBook";
-    }
-
-    @PostMapping("/add")
-    public String submitAddNewBook(@Valid @ModelAttribute("NewBook") Book book, BindingResult result) {
-        if(result.hasErrors()) {
-            return "addBook";
-        }
-        bookService.downloadImage(book);
-        bookService.setNewBook(book);
         return "redirect:/books";
     }
 

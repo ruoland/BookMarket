@@ -36,7 +36,7 @@ public class CartController {
 
         //카트에 이미 있는지 확인하기
         for(CartItem item : cart.getBooks()) {
-            if(item.getBookId().equals(bookId)) {
+            if(item.getBook().getBookId().equals(bookId)) {
                 item.setAmount(item.getAmount() + 1);
                 cartRepository.save(cart);
                 return "redirect:/user/cart/view";
@@ -45,7 +45,7 @@ public class CartController {
         //카트에 담긴 게 없으면
         CartItem cartItem = new CartItem();
         cartItem.setCart(cart);
-        cartItem.setBookId(bookId);
+        cartItem.setBook(bookService.getBookById(bookId));
         cartItem.setAmount(1);
         cart.getBooks().add(cartItem);
 
@@ -54,12 +54,13 @@ public class CartController {
 
         return "redirect:/user/cart/view";
     }
+
     @GetMapping("/view")
     public String viewCart(Model model, Principal principal) {
         // 사용자 이름으로 카트 정보를 가져옴
         Cart cart = cartService.getCart(principal.getName());
         model.addAttribute("cart", cart);
-
+        model.addAttribute("totalPrice",cartService.totalPrice(principal.getName()));
         return "cart/view"; // 장바구니 페이지 템플릿 이름
     }
 }
