@@ -1,6 +1,7 @@
 package com.mysite.sbb.user;
 
 import com.mysite.sbb.cart.Cart;
+import com.mysite.sbb.user.signup.UserRole;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;

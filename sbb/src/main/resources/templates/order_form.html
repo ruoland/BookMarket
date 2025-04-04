@@ -5,25 +5,25 @@
 			<h4>책 구매하기</h4>
 		</div>
 	</div>
-	<form th:action="@{/book/buy}" th:object="${userRegistryForm}" method="post">
+	<form th:action="@{/buy/confirm}" th:object="${itemBuyForm}" method="post">
 		<div th:replace="~{form_errors :: formErrorsFragment}"></div>
 		<div class="mb-3">
 			<label for="userId" class="form-label">사용자ID</label>
 			<input type="text" th:field="*{userId}" class="form-control">
 		</div>
 		<div class="mb-3">
-			<label for="password" class="form-label">비밀번호</label>
-			<input type="password" th:field="*{password}" class="form-control">
+			<label for="number" class="form-label">전화번호</label>
+			<input type="text" th:field="*{number}" class="form-control">
 		</div>
 		<div class="mb-3">
-			<label for="passwordCheck" class="form-label">비밀번호 확인</label>
-			<input type="password" th:field="*{passwordCheck}" class="form-control">
+			<label for="delivery" class="form-label">배송지</label>
+			<input type="text" th:field="*{delivery}" class="form-control">
 		</div>
 		<div class="mb-3">
 			<label for="email" class="form-label">이메일</label>
 			<input type="email" th:field="*{email}" class="form-control">
 		</div>
-		<button type="submit" class="btn btn-primary">회원가입</button>
+		<button type="submit" class="btn btn-primary">구매</button>
 	</form>
 </div>
 

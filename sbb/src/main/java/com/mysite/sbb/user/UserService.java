@@ -1,6 +1,7 @@
 package com.mysite.sbb.user;
 
 import com.mysite.sbb.DataNotFoundException;
+import com.mysite.sbb.user.signup.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.Authentication;
