@@ -1,4 +1,4 @@
-package com.mysite.sbb.order;
+package com.mysite.sbb.order.entity;
 
 public enum EnumStatus {
     ORDERED,

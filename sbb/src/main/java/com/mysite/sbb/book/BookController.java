@@ -1,5 +1,6 @@
 package com.mysite.sbb.book;
 
+import com.mysite.sbb.user.SbbUser;
 import com.mysite.sbb.user.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,14 @@ public class BookController {
     @Autowired
     UserService userService;
 
+    @GetMapping()
+    public String bookList(Model model) {
+        List<Book> bookList =bookService.getAllBookList();
+
+        model.addAttribute("bookList", bookList);
+        return "book/book_list"; // bookList.html을 반환
+    }
+
     //책 추가 폼
     @GetMapping("/add")
     public String addBookForm(Model model, @RequestParam(value = "language", required = false) String language) {
@@ -35,14 +44,16 @@ public class BookController {
             LocaleContextHolder.setLocale(new Locale(language));
         }
         model.addAttribute("NewBook", new Book());
-        return "addBook";
+        return "book/add_book";
     }
 
     @PostMapping("/add")
-    public String submitAddNewBook(@Valid @ModelAttribute("NewBook") Book book, BindingResult result) {
+    public String submitAddNewBook(Principal principal, @Valid @ModelAttribute("NewBook") Book book, BindingResult result) {
         if(result.hasErrors()) {
-            return "addBook";
+
+            return "book/add_book";
         }
+        book.setSellerId(principal.getName());
         bookService.downloadImage(book);
         bookService.setNewBook(book);
         return "redirect:/books";
@@ -53,7 +64,7 @@ public class BookController {
         Book book = bookService.getBookById(bookId);
 
         if(userService.canCurrentUserAccess(book.getAuthor())){
-            bookService.setDeleteBook(bookId);
+            bookService.deleteBook(bookId);
             model.addFlashAttribute("successMessage", "성공적으로 삭제 했습니다.");
         }
         else{
@@ -75,24 +86,16 @@ public class BookController {
             return "redirect:/books/book?id=" + bookId;
         }
         model.addAttribute("EditBook", book);
-        return "editBook";
+        return "book/edit_book";
     }
     @PostMapping("/edit")
     public String submitEditBook(@Valid @ModelAttribute("EditBook") Book book, BindingResult result) {
         if(result.hasErrors()) {
-            return "editBook";
+            return "book/edit_book";
         }
         bookService.downloadImage(book);
-        bookService.setUpdateBook(book);
+        bookService.setNewBook(book);
         return "redirect:/books";
-    }
-
-    @GetMapping()
-    public String bookList(Model model) {
-        List<Book> bookList =bookService.getAllBookList();
-
-        model.addAttribute("bookList", bookList);
-        return "bookList"; // bookList.html을 반환
     }
 
     @GetMapping("/book")
@@ -102,10 +105,10 @@ public class BookController {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if(authentication instanceof AnonymousAuthenticationToken)
-            return "book";
+            return "book/book";
 
         User user = (User) authentication.getPrincipal();
         model.addAttribute("user", userService.getUser(user.getUsername()));
-        return "book";
+        return "book/book";
     }
 }

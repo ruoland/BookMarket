@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layout}">
+<head>
+    <title>내 정보</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+</head>
+<body>
+<div layout:fragment="content" class="container mt-5">
+    <!-- 사용자 정보 -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h4>내 정보</h4>
+        </div>
+        <div class="card-body">
+            <p><b>아이디:</b> <span th:text="${sbbUser.userId}"></span></p>
+            <p><b>이메일:</b> <span th:text="${sbbUser.email}"></span></p>
+            <p><b>역할:</b>
+                <span th:text="${sbbUser.role == 'ADMIN' ? '관리자' : '사용자'}"></span>
+            </p>
+        </div>
+    </div>
+
+    <!-- 주문 정보 -->
+    <div class="card mb-4">
+        <div class="card-header bg-secondary text-white">
+            <h4>주문 내역</h4>
+        </div>
+        <div class="card-body">
+            <!-- 주문이 없을 경우 메시지 표시 -->
+            <div th:if="${orders == null}">
+                <p>주문 내역이 없습니다.</p>
+            </div>
+            <div th:if="${orders != null}">
+                <table class="table table-bordered">
+                    <thead class="thead-light">
+                    <tr>
+                        <th>주문 번호</th>
+                        <th>주문 날짜</th>
+                        <th>배송지</th>
+                        <th>상태</th>
+                        <th>결제 가격</th>
+                    </tr>
+                    </thead>
+                    <tbody th:each="order : ${orders}"> <!-- orders 리스트를 반복 -->
+                    <tr th:each="orderItem : ${order.orderItems}"> <!-- 각 주문의 항목들을 반복 -->
+                        <!-- 주문 번호 -->
+                        <td th:text="${order.orderId}"></td>
+
+                        <!-- 주문 날짜 -->
+                        <td th:text="${#temporals.format(orderItem.orderedDate, 'yyyy-MM-dd HH:mm')}"></td>
+
+                        <!-- 배송지 -->
+                        <td th:text="${orderItem.deliveryAddress}"></td>
+
+                        <!-- 상태 -->
+                        <td th:text="${orderItem.status}"></td>
+
+                        <!-- 결제 가격 -->
+                        <td th:text="${orderItem.amount}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header bg-secondary text-white">
+            <h4>당신이 판매 중인 책</h4>
+        </div>
+        <div class="card-body">
+            <!-- 판매 책이 없을 경우 메시지 표시 -->
+            <div th:if="${sellerBooks == null}">
+                <p>판매 중인 책이 없습니다.</p>
+            </div>
+
+            <!-- 판매 책 목록 -->
+            <div th:if="${sellerBooks != null}">
+                <table class="table table-bordered">
+                    <thead class="thead-light">
+                    <tr>
+                        <th>판매 책 제목 (번호)</th>
+                        <th>가격</th>
+                        <th>상태</th>
+                        <th>현재 재고</th>
+                    </tr>
+                    </thead>
+                    <tbody th:each="book : ${sellerBooks}">
+                    <tr>
+                        <!-- 판매 책 번호 -->
+                        <td th:text="|${book.name} (${book.bookId})|"></td>
+
+                        <!-- 가격 -->
+                        <td th:text="${book.unitPrice}"></td>
+
+                        <!-- 상태 -->
+                        <td th:text="${book.condition}"></td>
+
+                        <!-- 현재 재고 -->
+                        <td th:text="${book.unitsInStock}"></td>
+
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 버튼 -->
+    <div class="text-center">
+        <a href="/welcome" class="btn btn-primary">홈으로 이동</a>
+        <a href="/books" class="btn btn-secondary">도서 목록 보기</a>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    /*[[${errorMessage}]]*/ {
+        alert(/*[(${errorMessage})]*/);
+    }
+</script>
+
+</body>
+</html>

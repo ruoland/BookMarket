@@ -1,4 +1,4 @@
-package com.mysite.sbb.buy;
+package com.mysite.sbb.order;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
@@ -8,22 +8,17 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ItemBuyForm {
-
-    @Size(min = 3, max = 25)
-    private String userId;
+public class ItemOrderForm {
 
     @NotEmpty(message = "수령인의 전화 번호를 입력 하세요.")
     private String number;
 
     @NotEmpty(message = "목적지 주소를 입력 하세요.")
-    private String delivery;
+    private String deliveryAddress;
 
-    @Email
+    @Email(message = "올바른 이메일 형식을 입력하세요.")
     private String email;
 
-    private int price;
-
+    @NotEmpty(message = "결제 수단을 선택하세요.")
     private String paymentMethod;
-
 }

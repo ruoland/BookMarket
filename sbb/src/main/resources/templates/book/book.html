@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+  <title>도서 상세 정보</title>
+</head>
+<body>
+<th:block layout:fragment="content">
+  <div class="container py-5">
+    <div class="row">
+      <!-- 도서 이미지 -->
+      <div class="col-md-4">
+        <div class="card">
+          <img th:src="${book.fileName != null and not book.fileName.isEmpty()} ? @{'/upload/' + ${book.fileName}} : @{'/images/no-image.png'}"
+               class="card-img-top" alt="Book Image" style="width: 100%; object-fit: cover; height: 400px;">
+          <div class="card-body">
+<!--            <p class="card-text text-center"><small class="text-muted">클릭하면 확대됩니다.</small></p>-->
+          </div>
+        </div>
+      </div>
+
+      <!-- 도서 정보 -->
+      <div class="col-md-8">
+        <div class="card h-100">
+          <div class="card-body">
+            <h3 class="card-title" th:text="${book.name}"></h3>
+            <p class="card-text" th:text="${book.description}"></p>
+            <hr>
+            <p><b>도서코드:</b> <span class="badge bg-secondary" th:text="${book.bookId}"></span></p>
+            <p><b>판매자:</b> <span th:text="${book.sellerId}"></span></p>
+            <p><b>저자:</b> <span th:text="${book.author}"></span></p>
+            <p><b>출판사:</b> <span th:text="${book.publisher}"></span></p>
+            <p><b>출판일:</b> <span th:text="${book.releaseDate}"></span></p>
+            <p><b>분류:</b> <span th:text="${book.category}"></span></p>
+            <p><b>재고수:</b> <span th:text="${book.unitsInStock}"></span></p>
+            <h4 class="card-text" th:text="${#numbers.formatInteger(book.unitPrice, 0, 'COMMA') + '원'}"></h4>
+            <hr>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+              <form th:action="@{/user/cart/add/{bookId}(bookId=${book.bookId})}" method="post">
+                <button type="submit" class="btn btn-primary me-md-2">
+                  <i class="fas fa-shopping-cart"></i> 도서 주문
+                </button>
+              </form>
+              <a th:href="@{/user/cart/view}" class="btn btn-warning me-md-2">
+                <i class="fas fa-shopping-bag"></i> 장바구니
+              </a>
+              <a th:href="@{/books}" class="btn btn-secondary">
+                <i class="fas fa-list"></i> 도서 목록
+              </a>
+              <a th:href="@{/books/edit?bookId={bookId}(bookId=${book.bookId})}"
+                 th:if="${user != null && (book.author == #authentication.name || user.role.value == 'ROLE_ADMIN')}"
+                 class="btn btn-info">
+                <i class="fas fa-edit"></i> 도서 수정
+              </a>
+              <button
+                      th:if="${user != null && (book.author == #authentication.name || user.role.value == 'ROLE_ADMIN')}"
+                      class="btn btn-danger" onclick="deleteConfirm([[${book.bookId}]])">
+                <i class="fas fa-trash-alt"></i> 도서 삭제
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</th:block>
+
+<th:block layout:fragment="script">
+  <script th:inline="javascript">
+    /*<![CDATA[*/
+    var errorMessage = /*[[${errorMessage}]]*/ null;
+    var successMessage = /*[[${successMessage}]]*/ null;
+
+    if (errorMessage) {
+        alert(errorMessage);
+    }
+
+    if (successMessage) {
+        alert(successMessage);
+    }
+
+    function deleteConfirm(bookId) {
+        if (confirm("정말로 삭제하시겠습니까?")) {
+            var csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
+            var csrfToken = document.querySelector('meta[name="_csrf"]').content;
+
+            fetch('/books/delete/' + bookId, {
+                method: 'POST',
+                headers: {
+                    [csrfHeader]: csrfToken,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert("삭제되었습니다.");
+                    window.location.href = '/books';
+                } else {
+                    alert("삭제에 실패했습니다.");
+                }
+            });
+        }
+    }
+    /*]]>*/
+  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</th:block>
+</body>
+</html>

@@ -1,4 +1,4 @@
-package com.mysite.sbb;
+package com.mysite.sbb.exception;
 
 public class UserNotFoundException extends RuntimeException{
     public UserNotFoundException(String message) {

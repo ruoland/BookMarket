@@ -21,6 +21,8 @@ public class Book implements Serializable{
     @Pattern(regexp = "^ISBN\\d{4}$", message = "Pattern.NewBook.bookId")
     private String bookId;
 
+    private String sellerId;
+
     @NotBlank
     private String name;
 
@@ -32,6 +34,7 @@ public class Book implements Serializable{
 
     @NotBlank
     private String description;
+
     private String publisher;
 
     private String category;

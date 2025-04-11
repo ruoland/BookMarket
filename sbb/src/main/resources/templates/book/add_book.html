@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>도서 등록</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+</head>
+<body>
+<th:block layout:fragment="content">
+    <div class="container my-3">
+        <div class="my-3 border-bottom">
+            <div>
+                <h4>도서 등록</h4>
+            </div>
+        </div>
+
+        <form th:action="@{/books/add}" th:object="${NewBook}" method="post" enctype="multipart/form-data">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+            <div class="mb-3">
+                <label for="bookId" class="form-label">도서 코드</label>
+                <input type="text" th:field="*{bookId}" class="form-control" id="bookId" />
+                <span th:if="${#fields.hasErrors('bookId')}" th:errors="*{bookId}" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label for="name" class="form-label">도서명</label>
+                <input type="text" th:field="*{name}" class="form-control" id="name" />
+                <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label for="unitPrice" class="form-label">가격</label>
+                <input type="text" th:field="*{unitPrice}" class="form-control" id="unitPrice" />
+                <span th:if="${#fields.hasErrors('unitPrice')}" th:errors="*{unitPrice}" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label for="author" class="form-label">저자</label>
+                <input type="text" th:field="*{author}" class="form-control" id="author" />
+            </div>
+
+            <div class="mb-3">
+                <label for="description" class="form-label">설명</label>
+                <textarea th:field="*{description}" class="form-control" id="description" rows="3"></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label for="publisher" class="form-label">출판사</label>
+                <input type="text" th:field="*{publisher}" class="form-control" id="publisher" />
+            </div>
+
+            <div class="mb-3">
+                <label for="category" class="form-label">분류</label>
+                <input type="text" th:field="*{category}" class="form-control" id="category" />
+            </div>
+
+            <div class="mb-3">
+                <label for="unitsInStock" class="form-label">재고</label>
+                <input type="text" th:field="*{unitsInStock}" class="form-control" id="unitsInStock" />
+                <span th:if="${#fields.hasErrors('unitsInStock')}" th:errors="*{unitsInStock}" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label for="releaseDate" class="form-label">출판일</label>
+                <input type="text" th:field="*{releaseDate}" class="form-control" id="releaseDate" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">상태</label>
+                <div class="form-check">
+                    <input type="radio" th:field="*{condition}" value="New" class="form-check-input" id="newCondition" />
+                    <label class="form-check-label" for="newCondition">신규</label>
+                </div>
+                <div class="form-check">
+                    <input type="radio" th:field="*{condition}" value="Old" class="form-check-input" id="oldCondition" />
+                    <label class="form-check-label" for="oldCondition">중고</label>
+                </div>
+                <div class="form-check">
+                    <input type="radio" th:field="*{condition}" value="E-Book" class="form-check-input" id="ebookCondition" />
+                    <label class="form-check-label" for="ebookCondition">전자책</label>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="bookImage" class="form-label">도서 이미지</label>
+                <input type="file" name="bookImage" class="form-control" id="bookImage" />
+            </div>
+
+            <button type="submit" class="btn btn-primary">등록</button>
+            <a th:href="@{/books}" class="btn btn-secondary">취소</a>
+        </form>
+    </div>
+</th:block>
+</body>
+</html>

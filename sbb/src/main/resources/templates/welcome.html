@@ -1,35 +1,36 @@
 <!DOCTYPE html>
-<html layout:decorate="~{layout}">
-
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html layout:decorate="~{layout}" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Welcome to Book Market</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
 <th:block layout:fragment="content">
-<div class="jumbotron" align="center">
-    <div class="container">
-        <h1 class="display-3">Welcome to Book Market</h1>
-        <p>최고의 책을 찾아보세요!</p>
-    </div>
-</div>
-
-<!-- Main Content -->
-<div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <h3 th:text="${strapline}">Welcome message goes here.</h3>
+    <!-- Jumbotron -->
+    <div class="jumbotron bg-primary text-white text-center py-5">
+        <div class="container">
+            <h1 class="display-4"><i class="fas fa-book"></i> Welcome to Book Market</h1>
+            <p class="lead">좋은 책을 값 싸게 찾아보세요!</p>
         </div>
     </div>
-</div>
 
-<!-- Footer -->
-<footer class="container">
-    <hr>
-    <p>&copy; Book Market 2025</p>
-</footer>
+    <!-- Main Content -->
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <h3 class="mb-4" th:text="${strapline}">Welcome message goes here.</h3>
+                <p class="lead">Explore our wide selection of books and find your next favorite read.</p>
+                <a href="/books" class="btn btn-primary btn-lg"><i class="fas fa-book-open"></i> Browse Books</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="container mt-5">
+        <hr>
+        <p class="text-center">&copy; Book Market 2025</p>
+    </footer>
 </th:block>
 </body>
 </html>

@@ -4,6 +4,7 @@ import com.mysite.sbb.book.Book;
 import com.mysite.sbb.book.BookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -32,27 +33,20 @@ public class CartController {
         if(principal.getName() ==null){
             return "redirect:/login";
         }
-        Cart cart = cartService.getCart(principal.getName());
-
-        //카트에 이미 있는지 확인하기
-        for(CartItem item : cart.getBooks()) {
-            if(item.getBook().getBookId().equals(bookId)) {
-                item.setAmount(item.getAmount() + 1);
-                cartRepository.save(cart);
-                return "redirect:/user/cart/view";
-            }
-        }
-        //카트에 담긴 게 없으면
-        CartItem cartItem = new CartItem();
-        cartItem.setCart(cart);
-        cartItem.setBook(bookService.getBookById(bookId));
-        cartItem.setAmount(1);
-        cart.getBooks().add(cartItem);
-
-
-        cartRepository.save(cart);
+        cartService.addCartItem(principal.getName(), bookId);
 
         return "redirect:/user/cart/view";
+    }
+    @PostMapping("/cart/remove")
+    public ResponseEntity<?> removeItem(@RequestParam String bookId, Principal principal) {
+        cartService.removeCartItem(principal.getName(), bookId);
+        return ResponseEntity.ok().build(); // 성공적인 응답 반환
+    }
+    @GetMapping("/cart/totalPrice")
+    public String getTotalPrice(Principal principal){
+        java.util.List<CartItem> cartItemList = cartService.getCartItems(principal.getName());
+        int totalPrice = cartService.getTotalPrice(cartItemList);
+        return  String.valueOf(totalPrice);
     }
 
     @GetMapping("/view")

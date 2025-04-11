@@ -1,0 +1,43 @@
+<html layout:decorate="~{layout}">
+<div layout:fragment="content" class="container my-3">
+    <div class="my-3 border-bottom">
+        <div>
+            <h4>결제 확인</h4>
+        </div>
+    </div>
+    <form th:action="@{/order/complete}" th:object="${itemOrderForm}" method="post">
+        <div th:replace="~{form_errors :: formErrorsFragment}"></div>
+
+        <!-- 히든 필드 -->
+        <input type="hidden" th:field="*{number}" />
+        <input type="hidden" th:field="*{deliveryAddress}" />
+        <input type="hidden" th:field="*{email}" />
+        <input type="hidden" th:field="*{paymentMethod}" />
+
+        <div class="mb-3">
+            <label for="number" class="form-label">전화번호</label>
+            <div th:text="${itemOrderForm.number}" class="form-control-plaintext"></div>
+        </div>
+
+        <div class="mb-3">
+            <label for="deliveryAddress" class="form-label">배송지</label>
+            <div th:text="${itemOrderForm.deliveryAddress}" class="form-control-plaintext"></div>
+        </div>
+
+        <div class="mb-3">
+            <label for="email" class="form-label">이메일</label>
+            <div th:text="${itemOrderForm.email}" class="form-control-plaintext"></div>
+        </div>
+
+        <!-- 총 결제 금액은 서버에서만 관리 -->
+        <div class="mb-3">
+            <label for="price" class="form-label">총 결제 금액</label>
+            <div th:text="${totalPrice}" class="form-control-plaintext"></div>
+        </div>
+
+        <!-- 버튼 -->
+        <button type="submit" class="btn btn-success">결제하기</button>
+    </form>
+
+</div>
+</html>

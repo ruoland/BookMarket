@@ -32,28 +32,69 @@
                     <td th:text="${cartItem.book.bookId}"></td>
                     <td th:text="${cartItem.book.name}"></td>
                     <td th:text="${cartItem.book.author}"></td>
-                    <td th:text="${cartItem.amount}"></td>
-                    <td th:text="${#numbers.formatCurrency(totalPrice)}"></td>
                     <td>
-                        <form th:action="@{/cart/remove}" method="post">
+                        <!-- 수량 변경 폼 -->
+                        <form th:action="@{/cart/update}" method="post" class="d-inline">
                             <input type="hidden" name="bookId" th:value="${cartItem.book.bookId}" />
-                            <button type="submit" class="btn btn-danger btn-sm">
-                                <i class="fas fa-trash-alt"></i> 삭제
-                            </button>
+                            <input type="number" name="amount" th:value="${cartItem.amount}" min="1" class="form-control form-control-sm" style="width: 70px;" />
                         </form>
+                    </td>
+                    <td th:text="${#numbers.formatCurrency(cartItem.book.unitPrice * cartItem.amount)}"></td>
+                    <td>
+                        <!-- 삭제 버튼 -->
+                        <button type="button" class="btn btn-danger btn-sm"
+                                th:data-book-id="${cartItem.book.bookId}"
+                                onclick="removeItem(this)">
+                            <i class="fas fa-trash-alt"></i> 삭제
+                        </button>
                     </td>
                 </tr>
                 </tbody>
             </table>
             <div class="d-flex justify-content-end">
+                <!-- 총 가격 표시 -->
                 <h4>총 가격: <span th:text="${#numbers.formatCurrency(totalPrice)}"></span></h4>
             </div>
         </div>
 
         <a th:href="@{/books}" class="btn btn-primary">계속 쇼핑하기</a>
-        <a th:href="@{/buy}" class="btn btn-success">구매하기</a>
+        <a th:href="@{/order}" class="btn btn-success">구매하기</a>
 
     </div>
 </th:block>
+<script th:inline="javascript">
+    function removeItem(button) {
+        var bookId = button.dataset.bookId;
+
+        // AJAX를 사용하여 서버에 삭제 요청
+        fetch('/cart/remove', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: 'bookId=' + bookId
+        })
+        .then(response => {
+            if (response.ok) {
+                // 삭제 성공 시 테이블에서 해당 행 제거
+                var row = button.parentNode.parentNode;
+                row.parentNode.removeChild(row);
+
+                // 총 가격 업데이트 (필요한 경우)
+                updateTotalPrice();
+            } else {
+                alert('삭제 실패');
+            }
+        });
+    }
+
+    function updateTotalPrice() {
+        fetch('/cart/totalPrice')
+        .then(response => response.text())
+        .then(totalPrice => {
+            document.querySelector('.total-price').textContent = totalPrice;
+        });
+    }
+</script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-package com.mysite.sbb.book;
+package com.mysite.sbb.exception;
 
 
 @SuppressWarnings("serial")
@@ -6,7 +6,7 @@ public class BookIdException extends RuntimeException {
 
     private String bookId;
 
-    public BookIdException(String bookId) {  //������
+    public BookIdException(String bookId) {
         super("Invalid Book ID: " + bookId); // 부모 클래스에 메시지 전달
         this.bookId = bookId;
     }

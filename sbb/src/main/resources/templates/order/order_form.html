@@ -1,0 +1,38 @@
+<html layout:decorate="~{layout}">
+<div layout:fragment="content" class="container my-3">
+	<div class="my-3 border-bottom">
+		<div>
+			<h4>책 구매하기</h4>
+		</div>
+	</div>
+	<form th:action="@{/order/confirm}" th:object="${itemOrderForm}" method="post">
+		<div th:replace="~{form_errors :: formErrorsFragment}"></div>
+		<div class="mb-3">
+			<label for="number" class="form-label">전화번호</label>
+			<input type="text" th:field="*{number}" class="form-control">
+		</div>
+		<div class="mb-3">
+			<label for="deliveryAddress" class="form-label">배송지</label>
+			<input type="text" th:field="*{deliveryAddress}" class="form-control">
+		</div>
+		<div class="mb-3">
+			<label for="email" class="form-label">이메일</label>
+			<input type="email" th:field="*{email}" class="form-control">
+		</div>
+
+		<!-- 결제 수단 선택 -->
+		<div class="mb-3">
+			<label for="paymentMethod" class="form-label">결제 수단</label>
+			<select th:field="*{paymentMethod}" class="form-select">
+				<option value="" disabled>결제 수단을 선택하세요</option>
+				<option value="creditCard">신용카드</option>
+				<option value="bankTransfer">계좌이체</option>
+				<option value="mobilePayment">휴대폰 결제</option>
+			</select>
+			<div th:if="${#fields.hasErrors('paymentMethod')}" th:errors="*{paymentMethod}" class="text-danger"></div>
+		</div>
+		<button type="submit" class="btn btn-primary">구매</button>
+	</form>
+</div>
+
+</html>

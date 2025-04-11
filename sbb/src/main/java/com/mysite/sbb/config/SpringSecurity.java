@@ -1,4 +1,4 @@
-package com.mysite.sbb;
+package com.mysite.sbb.config;
 
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Configuration;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -23,10 +22,13 @@ public class SpringSecurity  {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
+                        //로그인, 회원가입은 접근할 수 있어야 함
                         .requestMatchers(new AntPathRequestMatcher("/user/login")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/user/signup")).permitAll()
+                        //User 정보 조회나 책 추가의 경우 로그인 필요
                         .requestMatchers(new AntPathRequestMatcher("/user/**")).authenticated()
-                        // 더 구체적인 경로를 먼저 선언
+                        .requestMatchers(new AntPathRequestMatcher("/books/add")).authenticated()
+                        //이외에는 접근 허용
                         .requestMatchers(new AntPathRequestMatcher("/**")).permitAll()) // 포괄적인 경로를 나중에 선언
                 .csrf((csrf) -> csrf
                         .ignoringRequestMatchers(new AntPathRequestMatcher("/h2-console/**")))

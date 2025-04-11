@@ -1,9 +1,8 @@
 package com.mysite.sbb.user;
 
-import com.mysite.sbb.DataNotFoundException;
+import com.mysite.sbb.exception.DataNotFoundException;
 import com.mysite.sbb.user.signup.UserRole;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
@@ -34,16 +33,8 @@ public class UserService {
         return user.orElseThrow(() -> new DataNotFoundException("사용자를 찾을 수 없습니다: " + userId));
     }
 
-    public SbbUser updateUser(String userId, UserRole role){
-        SbbUser sbbUser = this.getUser(userId);
-        sbbUser.setRole(role);
-        return this.userRepository.save(sbbUser);
-    }
-    @Cacheable("users")
-    public SbbUser getUserById(String userId) {
-        return this.userRepository.findByUserId(userId)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다: " + userId));
-    }
+
+
 
     public boolean isCurrentUserAdmin() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

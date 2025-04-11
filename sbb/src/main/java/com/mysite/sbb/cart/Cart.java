@@ -21,7 +21,6 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long cartId;
 
-
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "sbbUser_id")
     private SbbUser sbbUser;

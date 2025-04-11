@@ -1,5 +1,7 @@
 package com.mysite.sbb.book;
 
+import com.mysite.sbb.exception.BookIdException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
@@ -18,7 +20,7 @@ public class BookService {
     private final BookRepository bookRepository;
 
     public List<Book> getAllBookList() {
-        // TODO Auto-generated method stub
+
         return bookRepository.findAll();
     }
 
@@ -34,6 +36,10 @@ public class BookService {
 
         booksByCategory.retainAll(booksByPublisher);
         return booksByCategory;
+    }
+
+    public Set<Book> getBooksBySellerId(String userId){
+        return bookRepository.findBySellerId(userId);
     }
     public Book getBookById(String bookId) {
         return bookRepository.findById(bookId)
@@ -64,12 +70,12 @@ public class BookService {
         }
 
     }
-
-    public void setUpdateBook(Book book) {
-        bookRepository.save(book);
+    @Transactional
+    public void updateUnitsInAmount(String bookId, int unitsInStock) {
+        bookRepository.updateUnitsInStock(bookId, unitsInStock);
     }
 
-    public void setDeleteBook(String bookId) {
+    public void deleteBook(String bookId) {
         bookRepository.deleteById(bookId);
     }
 }
