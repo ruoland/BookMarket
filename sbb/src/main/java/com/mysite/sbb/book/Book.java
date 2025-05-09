@@ -48,7 +48,6 @@ public class Book implements Serializable{
     @Transient // 북 이미지는 DB에 저장되지 않게 합니다
     private MultipartFile bookImage;
 
-
     private String  fileName;
 
     @Builder

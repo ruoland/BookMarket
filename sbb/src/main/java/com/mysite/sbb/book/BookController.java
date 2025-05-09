@@ -30,10 +30,12 @@ public class BookController {
     UserService userService;
 
     @GetMapping()
-    public String bookList(Model model) {
-        List<Book> bookList =bookService.getAllBookList();
-
+    public String bookList(@RequestParam(required = false) String keyword, @RequestParam(required = false) String category, Model model) {
+        List<Book> bookList =bookService.findBook(keyword, category);
         model.addAttribute("bookList", bookList);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("category", category);
+        model.addAttribute("categories", EnumCategories.values());
         return "book/book_list"; // bookList.html을 반환
     }
 
@@ -50,7 +52,6 @@ public class BookController {
     @PostMapping("/add")
     public String submitAddNewBook(Principal principal, @Valid @ModelAttribute("NewBook") Book book, BindingResult result) {
         if(result.hasErrors()) {
-
             return "book/add_book";
         }
         book.setSellerId(principal.getName());
@@ -63,7 +64,7 @@ public class BookController {
     public String removeBook(RedirectAttributes model, @RequestParam("bookId") String bookId, Principal principal) {
         Book book = bookService.getBookById(bookId);
 
-        if(userService.canCurrentUserAccess(book.getAuthor())){
+        if(userService.canCurrentUserAccess(book.getSellerId())){
             bookService.deleteBook(bookId);
             model.addFlashAttribute("successMessage", "성공적으로 삭제 했습니다.");
         }
@@ -81,7 +82,7 @@ public class BookController {
         }
         Book book = bookService.getBookById(bookId);
 
-        if(!userService.canCurrentUserAccess(book.getAuthor())){
+        if(!userService.canCurrentUserAccess(book.getSellerId())){
             redirectAttributes.addFlashAttribute("errorMessage", "권한이 없습니다.");
             return "redirect:/books/book?id=" + bookId;
         }
@@ -89,11 +90,12 @@ public class BookController {
         return "book/edit_book";
     }
     @PostMapping("/edit")
-    public String submitEditBook(@Valid @ModelAttribute("EditBook") Book book, BindingResult result) {
+    public String submitEditBook(Principal principal, @Valid @ModelAttribute("EditBook") Book book, BindingResult result) {
         if(result.hasErrors()) {
             return "book/edit_book";
         }
         bookService.downloadImage(book);
+        book.setSellerId(principal.getName());
         bookService.setNewBook(book);
         return "redirect:/books";
     }

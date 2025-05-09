@@ -17,16 +17,14 @@ public interface BookRepository extends JpaRepository<Book, String> {
 
     List<Book> findByCategory(String category);
 
-    @Query("SELECT b FROM Book b WHERE b.publisher IN :publishers")
-    Set<Book> findByPublisherIn(@Param("publishers") List<String> publishers);
+    List<Book> findByNameContainingOrAuthorContaining(String keyword, String author);
 
-    @Query("SELECT b FROM Book b WHERE b.category IN :categories")
-    Set<Book> findByCategoryIn(@Param("categories") List<String> categories);
-
+    List<Book> findByCategoryContaining(String category);
     Set<Book> findBySellerId(String sellerId);
 
     @Modifying
     @Query("UPDATE Book b SET b.unitsInStock = :unitsInStock WHERE b.bookId = :bookId")
     void updateUnitsInStock(@Param("bookId") String bookId, @Param("unitsInStock") int unitsInStock);
 
+    List<Book> findByNameContainingOrAuthorContainingAndCategoryContaining(String keyword, String author, String category);
 }

@@ -27,6 +27,7 @@ public class CartService {
                 cart.getBooks().remove(item);
             }
         });
+        cartRepository.save(cart);
     }
     public Cart getCart(String username) {
         // 사용자 조회
@@ -80,5 +81,16 @@ public class CartService {
     public int totalPrice(String username){
         Cart cart = cartRepository.findBySbbUser_UserId(username).orElseThrow(() -> new UserNotFoundException(("사용자를 찾을 수 없었습니다:"+username)));
         return cart.getBooks().stream().mapToInt(item -> item.getAmount() * item.getBook().getUnitPrice()).sum();
+    }
+
+    public void updateCartItem(String name, String bookId, int amount) {
+        Cart cart = getCart(name);
+        for(CartItem item : cart.getBooks()) {
+            if(item.getBook().getBookId().equals(bookId)) {
+                item.setAmount(amount);
+                cartRepository.save(cart);
+                return;
+            }
+        }
     }
 }

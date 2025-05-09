@@ -69,17 +69,17 @@
 
             <div class="mb-3">
                 <label class="form-label">상태</label>
-                <div class="form-check">
-                    <input type="radio" th:field="*{condition}" value="New" class="form-check-input" id="newCondition" />
-                    <label class="form-check-label" for="newCondition">신규</label>
+                <div class="form-check form-check-inline">
+                    <input type="radio" th:field="*{condition}" value="상" class="form-check-input" id="highCondition" />
+                    <label class="form-check-label" for="highCondition">상</label>
                 </div>
-                <div class="form-check">
-                    <input type="radio" th:field="*{condition}" value="Old" class="form-check-input" id="oldCondition" />
-                    <label class="form-check-label" for="oldCondition">중고</label>
+                <div class="form-check form-check-inline">
+                    <input type="radio" th:field="*{condition}" value="중" class="form-check-input" id="middleCondition" />
+                    <label class="form-check-label" for="middleCondition">중</label>
                 </div>
-                <div class="form-check">
-                    <input type="radio" th:field="*{condition}" value="E-Book" class="form-check-input" id="ebookCondition" />
-                    <label class="form-check-label" for="ebookCondition">전자책</label>
+                <div class="form-check form-check-inline">
+                    <input type="radio" th:field="*{condition}" value="하" class="form-check-input" id="lowCondition" />
+                    <label class="form-check-label" for="lowCondition">하</label>
                 </div>
             </div>
 

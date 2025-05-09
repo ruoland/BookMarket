@@ -3,11 +3,29 @@
 <head>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
     <title>도서 목록</title>
+    <style>
+        .btn-primary {
+          white-space: nowrap;
+        }
+    </style>
 </head>
 <body>
 <th:block layout:fragment="content">
     <div class="container py-5">
+        <form th:action="@{/books}" method="get" class="mb-4 d-flex">
+            <input type="text" name="keyword" class="form-control me-2" placeholder="책 제목, 저자 검색" th:value="${keyword}">
+            <select name="category" class="form-control me-2">
+                <option value="" th:selected="${category == null or category == ''}">전체 카테고리</option>
+                <option th:each="cat : ${categories}"
+                        th:value="${cat.name()}"
+                        th:text="${cat.name()}"
+                        th:selected="${cat.name() == category}"></option>
+            </select>
+
+            <button type="submit" class="btn btn-primary px-3">검색</button>
+        </form>
         <div class="row justify-content-center">
+
             <script th:if="${errorMessage != null}" th:inline="javascript">
                 /*<![CDATA[*/
                 alert(/*[[${#strings.escapeJavaScript(errorMessage)}]]*/);

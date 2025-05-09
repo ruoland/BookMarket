@@ -3,6 +3,7 @@ package com.mysite.sbb.book;
 import com.mysite.sbb.exception.BookIdException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,17 +26,19 @@ public class BookService {
     }
 
 
-    public List<Book> getBookListByCategory(String category) {
-        List<Book> booksByCategory = bookRepository.findByCategory(category);
-        return booksByCategory;
-    }
+    public List<Book> findBook(String keyword, String category) {
+        if(Strings.isNotEmpty(keyword) && Strings.isEmpty(category))
+            // 키워드로만 검색하기
+            return bookRepository.findByNameContainingOrAuthorContaining(keyword, keyword);
 
-    public Set<Book> getBookListByFilter(Map<String, List<String>> filter) {
-        Set<Book> booksByPublisher = bookRepository.findByPublisherIn(filter.get("publisher"));
-        Set<Book> booksByCategory = bookRepository.findByCategoryIn(filter.get("category"));
+        else if(Strings.isEmpty(keyword) && Strings.isNotEmpty(category))
+            return bookRepository.findByCategoryContaining(category);
 
-        booksByCategory.retainAll(booksByPublisher);
-        return booksByCategory;
+        else if(Strings.isNotEmpty(keyword) && Strings.isNotEmpty(category))
+            return bookRepository.findByNameContainingOrAuthorContainingAndCategoryContaining(keyword, keyword, category);
+
+        else
+            return getAllBookList();
     }
 
     public Set<Book> getBooksBySellerId(String userId){

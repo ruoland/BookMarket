@@ -5,9 +5,14 @@
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
 </head>
 <body>
 <th:block layout:fragment="content">
+    <div th:if="${errorMsg}" class="alert alert-danger" th:text="${errorMsg}"></div>
+
     <div class="container my-5">
         <h1 class="mb-4">장바구니</h1>
 
@@ -34,9 +39,15 @@
                     <td th:text="${cartItem.book.author}"></td>
                     <td>
                         <!-- 수량 변경 폼 -->
-                        <form th:action="@{/cart/update}" method="post" class="d-inline">
+                        <form th:action="@{/user/cart/update}" method="post" class="d-inline">
                             <input type="hidden" name="bookId" th:value="${cartItem.book.bookId}" />
-                            <input type="number" name="amount" th:value="${cartItem.amount}" min="1" class="form-control form-control-sm" style="width: 70px;" />
+                            <input type="number" name="amount"
+                                   th:value="${cartItem.amount}"
+                                   min="1"
+                                   class="form-control form-control-sm"
+                                   style="width: 70px;"
+                                   th:attr="max=${cartItem.book.unitsInStock}"
+                            onchange="this.form.submit()"/>
                         </form>
                     </td>
                     <td th:text="${#numbers.formatCurrency(cartItem.book.unitPrice * cartItem.amount)}"></td>
@@ -53,7 +64,7 @@
             </table>
             <div class="d-flex justify-content-end">
                 <!-- 총 가격 표시 -->
-                <h4>총 가격: <span th:text="${#numbers.formatCurrency(totalPrice)}"></span></h4>
+                <h4>총 가격: <span class="total-price" th:text="${#numbers.formatCurrency(totalPrice)}"></span></h4>
             </div>
         </div>
 
@@ -61,40 +72,45 @@
         <a th:href="@{/order}" class="btn btn-success">구매하기</a>
 
     </div>
+    <script th:inline="javascript">
+        function removeItem(button) {
+            var bookId = button.dataset.bookId;
+
+            const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+            const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
+
+            fetch('/user/cart/remove', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    [csrfHeader]: csrfToken
+                },
+                body: 'bookId=' + bookId
+            })
+
+            .then(response => {
+                if (response.ok) {
+                    // 삭제 성공 시 테이블에서 해당 행 제거
+                    var row = button.parentNode.parentNode;
+                    row.parentNode.removeChild(row);
+
+                    // 총 가격 업데이트 (필요한 경우)
+                    updateTotalPrice();
+                } else {
+                    alert('삭제 실패');
+                }
+            });
+        }
+
+        function updateTotalPrice() {
+            fetch('/user/cart/totalPrice')
+            .then(response => response.text())
+            .then(totalPrice => {
+                document.querySelector('.total-price').textContent = totalPrice;
+            });
+        }
+    </script>
 </th:block>
-<script th:inline="javascript">
-    function removeItem(button) {
-        var bookId = button.dataset.bookId;
 
-        // AJAX를 사용하여 서버에 삭제 요청
-        fetch('/cart/remove', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: 'bookId=' + bookId
-        })
-        .then(response => {
-            if (response.ok) {
-                // 삭제 성공 시 테이블에서 해당 행 제거
-                var row = button.parentNode.parentNode;
-                row.parentNode.removeChild(row);
-
-                // 총 가격 업데이트 (필요한 경우)
-                updateTotalPrice();
-            } else {
-                alert('삭제 실패');
-            }
-        });
-    }
-
-    function updateTotalPrice() {
-        fetch('/cart/totalPrice')
-        .then(response => response.text())
-        .then(totalPrice => {
-            document.querySelector('.total-price').textContent = totalPrice;
-        });
-    }
-</script>
 </body>
 </html>

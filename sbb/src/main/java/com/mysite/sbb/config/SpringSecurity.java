@@ -21,6 +21,7 @@ public class SpringSecurity  {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+
                 .authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
                         //로그인, 회원가입은 접근할 수 있어야 함
                         .requestMatchers(new AntPathRequestMatcher("/user/login")).permitAll()

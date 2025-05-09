@@ -1,15 +1,17 @@
 package com.mysite.sbb.cart;
 
-import com.mysite.sbb.book.Book;
+
 import com.mysite.sbb.book.BookService;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
 
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.*;
 import java.security.Principal;
 import java.util.Optional;
 
@@ -37,18 +39,18 @@ public class CartController {
 
         return "redirect:/user/cart/view";
     }
-    @PostMapping("/cart/remove")
+    @PostMapping("/remove")
     public ResponseEntity<?> removeItem(@RequestParam String bookId, Principal principal) {
         cartService.removeCartItem(principal.getName(), bookId);
         return ResponseEntity.ok().build(); // 성공적인 응답 반환
     }
-    @GetMapping("/cart/totalPrice")
+    @GetMapping("/totalPrice")
+    @ResponseBody
     public String getTotalPrice(Principal principal){
-        java.util.List<CartItem> cartItemList = cartService.getCartItems(principal.getName());
+        List<CartItem> cartItemList = cartService.getCartItems(principal.getName());
         int totalPrice = cartService.getTotalPrice(cartItemList);
-        return  String.valueOf(totalPrice);
+        return String.valueOf(totalPrice);
     }
-
     @GetMapping("/view")
     public String viewCart(Model model, Principal principal) {
         // 사용자 이름으로 카트 정보를 가져옴
@@ -57,4 +59,19 @@ public class CartController {
         model.addAttribute("totalPrice",cartService.totalPrice(principal.getName()));
         return "cart/view"; // 장바구니 페이지 템플릿 이름
     }
+    @PostMapping("/update")
+    public String updateCartItem(@RequestParam String bookId,
+                                 @RequestParam int amount,
+                                 Principal principal,
+                                 RedirectAttributes redirectAttributes) {
+        int stock = (int) bookService.getBookById(bookId).getUnitsInStock();
+        if (stock < amount) {
+            redirectAttributes.addFlashAttribute("errorMsg", "재고가 부족합니다! (남은 수량: " + stock + ")");
+            return "redirect:/user/cart/view";
+        }
+        cartService.updateCartItem(principal.getName(), bookId, amount);
+        return "redirect:/user/cart/view";
+    }
+
+
 }

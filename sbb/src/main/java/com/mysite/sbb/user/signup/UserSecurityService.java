@@ -37,7 +37,6 @@ public class UserSecurityService implements UserDetailsService {
         }
         String role = username.equals("admin") ?
                 UserRole.ADMIN.getValue() : UserRole.USER.getValue();
-
         return User.builder()
                 .username(sbbUser.getUserId())
                 .password(sbbUser.getPassword())
